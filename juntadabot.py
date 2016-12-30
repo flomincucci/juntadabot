@@ -8,7 +8,8 @@ v0.1 Version inicial, sin soporte para multiples juntadas
 
 import logging
 import redis
-import telegram
+
+from telegram.ext import Updater, CommandHandler
 
 # Enable logging
 logging.basicConfig(
@@ -22,11 +23,11 @@ r = redis.Redis(
         port=6379)
 
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='¡Hola! Soy JuntadaBot!')
+    update.message.reply_text('¡Hola! Soy JuntadaBot!')
 
 
 def help(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Para crear una nueva juntada, manda /nueva_juntada <nombre_juntada>')
+    update.message.reply_text('Para crear una nueva juntada, manda /nueva_juntada <nombre_juntada>')
 
 
 def nueva_juntada(bot, update):
@@ -104,22 +105,22 @@ def error(bot, update, error):
 
 
 def main():
-    updater = telegram.Updater(token=TOKEN)
+    updater = Updater(TOKEN)
     dp = updater.dispatcher
 
-    dp.addTelegramCommandHandler("start", start)
-    dp.addTelegramCommandHandler("help", help)
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", help))
 
-    dp.addTelegramCommandHandler("nueva_juntada", nueva_juntada)
-    dp.addTelegramCommandHandler("vaciar_juntada", vaciar_juntada)
-    dp.addTelegramCommandHandler("eliminar_juntada", eliminar_juntada)
-    dp.addTelegramCommandHandler("listar_asistentes", listar_asistentes)
+    dp.add_handler(CommandHandler("nueva_juntada", nueva_juntada))
+    dp.add_handler(CommandHandler("vaciar_juntada", vaciar_juntada))
+    dp.add_handler(CommandHandler("eliminar_juntada", eliminar_juntada))
+    dp.add_handler(CommandHandler("listar_asistentes", listar_asistentes))
 
-    dp.addTelegramCommandHandler("voy", voy)
-    dp.addTelegramCommandHandler("no_voy", no_voy)
+    dp.add_handler(CommandHandler("voy", voy))
+    dp.add_handler(CommandHandler("no_voy", no_voy))
 
-    dp.addTelegramMessageHandler(rsvp)
-    dp.addErrorHandler(error)
+    #dp.add_handler(rsvp)
+    #dp.addErrorHandler(error)
 
     updater.start_polling()
     updater.idle()
